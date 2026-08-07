@@ -1,14 +1,11 @@
 # VEB Status — ventura-aifree
 
-**Nota: B+**
+**Nota: A-**
 
 | Criterio | Status |
 |----------|--------|
-| CI lint+build | ✅ |
+| CI test+lint+build | ✅ |
+| Vitest catalog/validators | ✅ |
 | Docker | ✅ |
-| Secret scan | ✅ gitleaks |
-| SCA | ✅ npm audit + Dependabot |
-| Threat/SLO/ADR/Model/GPU | ✅ |
-| SECURITY.md | ✅ |
-| Release | ✅ |
-| Testes unitarios | ⚠️ quality via lint+build |
+| gitleaks / Dependabot | ✅ |
+| Threat/SLO/ADR | ✅ |
