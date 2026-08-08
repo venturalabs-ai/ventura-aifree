@@ -18,6 +18,6 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           VER=$(tr -d '[:space:]' < VERSION)
           test "$TAG" = "v$VER"
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
