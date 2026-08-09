@@ -4,12 +4,17 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { pathFor } from "@/lib/constants";
 
+const subscribeToHydration=(onStoreChange:()=>void)=>
+ useAuthStore.persist?.onFinishHydration(onStoreChange)??(()=>{});
+const getHydrationSnapshot=()=>useAuthStore.persist?.hasHydrated()??false;
+const getServerHydrationSnapshot=()=>false;
+
 export function AuthGate({children}:{children:React.ReactNode}){
  const user=useAuthStore((s)=>s.user);
  const hydrated=useSyncExternalStore(
-  useAuthStore.persist.onFinishHydration,
-  useAuthStore.persist.hasHydrated,
-  ()=>false
+  subscribeToHydration,
+  getHydrationSnapshot,
+  getServerHydrationSnapshot
  );
  const router=useRouter();
  useEffect(()=>{if(hydrated&&!user)router.replace(pathFor("/cadastro/"))},[hydrated,user,router]);
