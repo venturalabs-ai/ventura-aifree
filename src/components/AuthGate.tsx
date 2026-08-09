@@ -1,18 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { pathFor } from "@/lib/constants";
 
+function subscribeToHydration(onStoreChange: () => void) {
+  const persistApi = useAuthStore.persist;
+  if (!persistApi) return () => undefined;
+
+  const unsubscribeHydrate = persistApi.onHydrate(onStoreChange);
+  const unsubscribeFinish = persistApi.onFinishHydration(onStoreChange);
+
+  return () => {
+    unsubscribeHydrate();
+    unsubscribeFinish();
+  };
+}
+
+function getHydrationSnapshot() {
+  return useAuthStore.persist?.hasHydrated() ?? false;
+}
+
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((state) => state.user);
-  const [hydrated, setHydrated] = useState(() => useAuthStore.persist.hasHydrated());
+  const hydrated = useSyncExternalStore(subscribeToHydration, getHydrationSnapshot, () => false);
   const router = useRouter();
-
-  useEffect(() => {
-    return useAuthStore.persist.onFinishHydration(() => setHydrated(true));
-  }, []);
 
   useEffect(() => {
     if (hydrated && !user) {
